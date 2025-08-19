@@ -167,71 +167,78 @@
   <footer class="footer">Hecho con 💗 por SrYulo</footer>
 
   <script>
-    // 👉 PONÉ ACÁ EL RAW URL DE TU GIST SECRETO:
-    const FEED_URL = "https://gist.githubusercontent.com/Int-Code-UY/ee642cb9278f57311196c31e500e28df/raw/cartas.json";
     
-    // Splash
-    const splash = document.getElementById('splash');
-    const openBtn = document.getElementById('openBtn');
-    openBtn.addEventListener('click', ()=> splash.classList.add('hide'));
-    splash.addEventListener('click', (e)=>{ if(e.target===splash) splash.classList.add('hide'); });
+  // URL del Gist estable (sin hash de commit)
+  const FEED_URL = "https://gist.githubusercontent.com/Int-Code-UY/ee642cb9278f57311196c31e500e28df/raw/cartas.json";
 
-    const listado = document.getElementById('listado');
-    const estado = document.getElementById('estado');
+  // Splash
+  const splash = document.getElementById('splash');
+  const openBtn = document.getElementById('openBtn');
+  openBtn.addEventListener('click', ()=> splash.classList.add('hide'));
+  splash.addEventListener('click', (e)=>{ if(e.target===splash) splash.classList.add('hide'); });
 
-    async function cargarCartas(){
-      try{
-        const res = await fetch(FEED_URL, { cache: 'no-cache' });
-        if(!res.ok) throw new Error('No pude leer el feed');
-        const cartas = await res.json();
-        listado.innerHTML = '';
-        cartas.forEach(c => {
-          const item = document.createElement('div');
-          item.className = 'item';
-          item.innerHTML = `
-            <h3>${esc(c.titulo || 'Sin título')}</h3>
-            <div class="meta">${esc(formatearFecha(c.fecha))}</div>
-            <div class="contenido">${renderContenido(c.contenido)}</div>
-          `;
-          listado.appendChild(item);
-        });
-        estado.textContent = cartas.length ? '' : 'Aún no hay cartas';
-      }catch(err){
-        estado.textContent = 'Sin conexión o feed no disponible.';
-        console.error(err);
-      }
+  const listado = document.getElementById('listado');
+  const estado  = document.getElementById('estado');
+
+  // 👉 cache-busting + no-store
+  async function cargarCartas(){
+    try{
+      const url = `${FEED_URL}?t=${Date.now()}`; // fuerza a evitar CDN cache
+      const res = await fetch(url, { cache: 'no-store' }); // más fuerte que 'no-cache'
+      if(!res.ok) throw new Error('No pude leer el feed');
+      const cartas = await res.json();
+
+      listado.innerHTML = '';
+      cartas.forEach(c => {
+        const item = document.createElement('div');
+        item.className = 'item';
+        item.innerHTML = `
+          <h3>${esc(c.titulo || 'Sin título')}</h3>
+          <div class="meta">${esc(formatearFecha(c.fecha))}</div>
+          <div class="contenido">${renderContenido(c.contenido)}</div>
+        `;
+        listado.appendChild(item);
+      });
+      estado.textContent = cartas.length ? '' : 'Aún no hay cartas';
+    }catch(err){
+      estado.textContent = 'Sin conexión o feed no disponible.';
+      console.error(err);
     }
+  }
 
-    function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
-    function renderContenido(s){ return esc(String(s ?? '')).replace(/\n/g,'<br>'); }
-    function formatearFecha(f){
-      if(!f) return '';
-      const d = new Date(f);
-      if(Number.isNaN(d.getTime())) return f;
-      return d.toLocaleDateString('es-UY', { year:'numeric', month:'long', day:'numeric' });
-    }
+  function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+  function renderContenido(s){ return esc(String(s ?? '')).replace(/\n/g,'<br>'); }
+  function formatearFecha(f){
+    if(!f) return '';
+    const d = new Date(f);
+    if(Number.isNaN(d.getTime())) return f;
+    return d.toLocaleDateString('es-UY', { year:'numeric', month:'long', day:'numeric' });
+  }
 
-    cargarCartas();
-    document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) cargarCartas(); });
+  // Carga inicial + refresco al volver a la app
+  cargarCartas();
+  document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) cargarCartas(); });
+  window.addEventListener('pageshow', (e)=>{ if(e.persisted) cargarCartas(); }); // iOS BFCache
 
-    // PWA ligero para “Agregar a pantalla de inicio” y cache del shell
-    if('serviceWorker' in navigator){
-      const code = `
-        const C='carta-shell-v2';
-        self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./index.html'])));});
-        self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==C&&caches.delete(k)))));});
-        self.addEventListener('fetch',e=>{
-          const u=new URL(e.request.url);
-          if(u.origin===location.origin){ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))); }
-        });
-      `;
-      const blob = new Blob([code], {type:'text/javascript'});
-      const url = URL.createObjectURL(blob);
-      navigator.serviceWorker.register(url);
-    }
+  // PWA ligero (no intercepta Gist externo)
+  if('serviceWorker' in navigator){
+    const code = `
+      const C='carta-shell-v2';
+      self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./index.html'])));});
+      self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(keys=>Promise.all(keys.map(k=>k!==C&&caches.delete(k)))));});
+      self.addEventListener('fetch',e=>{
+        const u=new URL(e.request.url);
+        if(u.origin===location.origin){ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))); }
+      });
+    `;
+    const blob = new Blob([code], {type:'text/javascript'});
+    const url = URL.createObjectURL(blob);
+    navigator.serviceWorker.register(url);
+  }
   </script>
 </body>
 </html>
+
 
 
 
