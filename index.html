@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Cartas 💌</title>
+  <meta name="theme-color" content="#ffd6e7">
+  <style>
+    :root{
+      --bg:#fff7fb; --card:#ffffffcc; --pink:#ff8fc1; --pink2:#ff5aa6;
+      --text:#5a4b57; --muted:#8b788a; --ring:#ffc5df; --radius:18px;
+      --shadow:0 10px 30px rgba(255,90,166,.18);
+    }
+    *{box-sizing:border-box} html,body{height:100%}
+    body{
+      margin:0; font-family:system-ui, -apple-system, Segoe UI, Roboto, Arial;
+      color:var(--text);
+      background:
+        radial-gradient(900px 500px at 10% -10%, #ffe4f1, transparent 60%),
+        radial-gradient(900px 500px at 110% 10%, #fff0f9, transparent 60%),
+        var(--bg);
+    }
+    .splash{position:fixed; inset:0; display:grid; place-items:center; background:var(--bg); z-index:10; transition:.5s}
+    .splash.hide{opacity:0; visibility:hidden}
+    .splash-card{width:min(92vw,560px); padding:28px; text-align:center; background:var(--card);
+      border:1px solid #ffd9ea; border-radius:22px; box-shadow:var(--shadow)}
+    .splash h1{margin:0 0 6px; color:var(--pink2)}
+    .splash p{margin:0 0 16px; color:var(--muted)}
+    .btn{background:linear-gradient(180deg,var(--pink),var(--pink2)); color:#fff; border:none; border-radius:999px; padding:12px 18px; font-weight:700; box-shadow:var(--shadow)}
+    header{position:sticky; top:0; padding:12px; background:#fff; border-bottom:1px solid #ffe0ef; z-index:5}
+    .brand{font-weight:800; color:var(--pink2); text-align:center}
+    .container{width:min(920px,92vw); margin:16px auto 80px; display:grid; gap:14px}
+    .card{background:var(--card); border:1px solid #ffd9ea; border-radius:var(--radius); box-shadow:var(--shadow); padding:14px}
+    h2{margin:6px 0 12px; color:#c05086}
+    .listado{display:grid; gap:12px}
+    .item{padding:12px; border:1px solid #ffe0ef; border-radius:12px; background:#fff}
+    .item h3{margin:0 0 6px; font-size:1rem; color:#c05086}
+    .meta{color:#867585; font-size:.85rem}
+    .contenido{margin-top:6px; line-height:1.7; white-space:pre-wrap}
+    .footer{padding:28px; text-align:center; color:var(--muted)}
+    .tip{font-size:.9rem; color:var(--muted); text-align:center}
+  </style>
+</head>
+<body>
+  <!-- Pantalla inicial -->
+  <div class="splash" id="splash">
+    <div class="splash-card">
+      <h1>Feliz cumple, amorcito</h1>
+      <p>(tócame para abrir)</p>
+      <button id="openBtn" class="btn">Abrir</button>
+    </div>
+  </div>
+
+  <header>
+    <div class="brand">Cartas 💌</div>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Tus cartas</h2>
+      <div id="listado" class="listado"></div>
+      <p class="tip" id="estado">Cargando…</p>
+    </section>
+  </main>
+
+  <footer class="footer">Hecho con 💗 por SrYulo</footer>
+
+  <script>
+    // 👉 PONÉ ACÁ EL RAW URL DE TU GIST SECRETO:
+    const FEED_URL = "https://gist.githubusercontent.com/Int-Code-UY/ee642cb9278f57311196c31e500e28df/raw/455f994a28d5f66761ba0320c3e4e93248182a78/cartas.json";
+
+    // Splash
+    const splash = document.getElementById('splash');
+    const openBtn = document.getElementById('openBtn');
+    openBtn.addEventListener('click', ()=> splash.classList.add('hide'));
+    splash.addEventListener('click', (e)=>{ if(e.target===splash) splash.classList.add('hide'); });
+
+    const listado = document.getElementById('listado');
+    const estado = document.getElementById('estado');
+
+    async function cargarCartas(){
+      try{
+        const res = await fetch(FEED_URL, { cache: 'no-cache' });
+        if(!res.ok) throw new Error('No pude leer el feed');
+        const cartas = await res.json();
+
+        listado.innerHTML = '';
+        cartas.forEach(c => {
+          const item = document.createElement('div');
+          item.className = 'item';
+          item.innerHTML = `
+            <h3>${esc(c.titulo || 'Sin título')}</h3>
+            <div class="meta">${esc(formatearFecha(c.fecha))}</div>
+            <div class="contenido">${renderContenido(c.contenido)}</div>
+          `;
+          listado.appendChild(item);
+        });
+        estado.textContent = cartas.length ? '—' : 'Aún no hay cartas';
+      }catch(err){
+        estado.textContent = 'Sin conexión o feed no disponible.';
+        console.error(err);
+      }
+    }
+
+    function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
+    function renderContenido(s){
+      // Permite emojis y saltos de línea; si querés admitir HTML, quita el escape (bajo tu responsabilidad).
+      return esc(String(s ?? '')).replace(/\n/g,'<br>');
+    }
+    function formatearFecha(f){
+      if(!f) return '';
+      const d = new Date(f);
+      if(Number.isNaN(d.getTime())) return f;
+      return d.toLocaleDateString('es-UY', { year:'numeric', month:'long', day:'numeric' });
+    }
+
+    // Carga inicial
+    cargarCartas();
+
+    // "Actualiza" si la abre de nuevo
+    document.addEventListener('visibilitychange', ()=>{
+      if(!document.hidden) cargarCartas();
+    });
+
+    // PWA opcional ultra ligera (cachea el shell y último feed)
+    if('serviceWorker' in navigator){
+      const code = `
+        const C='carta-shell-v1';
+        self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>c.addAll(['./','./index.html'])));});
+        self.addEventListener('fetch',e=>{
+          const u=new URL(e.request.url);
+          if(u.origin===location.origin){ e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))); }
+        });
+      `;
+      const blob = new Blob([code], {type:'text/javascript'});
+      const url = URL.createObjectURL(blob);
+      navigator.serviceWorker.register(url);
+    }
+  </script>
+</body>
+</html>
