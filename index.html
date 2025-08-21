@@ -1,20 +1,13 @@
 <!doctype html>
 <html lang="es">
 <head>
- <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Cartas 💌</title>
-<meta name="theme-color" content="#ffd6e7">
-
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
-<meta name="apple-mobile-web-app-title" content="Cartas 💌">
-
-<!-- iOS usa esto. Ruta RELATIVA para que funcione en /usuario/REPO/ -->
-<link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png?v=4">
-<link rel="apple-touch-icon" href="./apple-touch-icon.png?v=4"> <!-- fallback -->
-
-
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Tu novio te ama</title>
+  <meta name="theme-color" content="#ffd6e7">
+  <link rel="apple-touch-icon" href="/icons/icon-192.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <style>
     :root{
       --bg:#fff7fb; --card:#ffffffee; --pink:#ff8fc1; --pink2:#ff5aa6;
@@ -33,15 +26,12 @@
         radial-gradient(900px 500px at 10% -10%, #ffe4f1, transparent 60%),
         radial-gradient(900px 500px at 110% 10%, #fff0f9, transparent 60%),
         var(--bg);
-      /* safe areas iPhone */
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
     }
-
-    /* SPLASH mejorado para móviles */
     .splash{
       position:fixed; inset:0; z-index:10; display:grid; place-items:center;
-      min-height:100dvh; /* evita el bug de 100vh en iOS */
+      min-height:100dvh;
       background:var(--bg);
       transition:opacity .45s ease, visibility .45s ease;
     }
@@ -65,10 +55,8 @@
       color:#fff; border:none; border-radius:999px;
       padding: 12px 20px; font-weight:700; box-shadow:var(--shadow);
       touch-action: manipulation;
-      min-height: 44px; /* tamaño táctil recomendado */
+      min-height: 44px;
     }
-
-    /* TOPBAR sticky con notch-safe */
     header.topbar{
       position:sticky; top:0; z-index:5;
       background:#fff; border-bottom:1px solid #ffe0ef;
@@ -78,8 +66,6 @@
       font-weight:800; color:var(--pink2);
       text-align:center; font-size: clamp(16px, 4.8vw, 18px);
     }
-
-    /* LAYOUT móvil-first */
     .container{
       width:100%;
       max-width: 820px;
@@ -99,8 +85,6 @@
       font-size: clamp(18px, 5.6vw, 22px);
       text-wrap: balance;
     }
-
-    /* LISTA de cartas optimizada para lectura */
     .listado{display:grid; gap: clamp(10px,3.2vw,14px)}
     .item{
       padding: clamp(12px,3.6vw,16px);
@@ -117,7 +101,7 @@
       line-height: 1.75;
       font-size: clamp(15px, 4.6vw, 17px);
       white-space: pre-wrap;
-      word-break: break-word; /* evita overflow en palabras largas */
+      word-break: break-word;
     }
 
     .footer{
@@ -125,53 +109,43 @@
       text-align:center; color:var(--muted);
       font-size: clamp(12px,3.6vw,14px);
     }
-
-    /* Mejoras táctiles / accesibilidad */
     :focus-visible{outline: 3px solid var(--ring); outline-offset: 2px; border-radius:10px}
     a,button{ -webkit-tap-highlight-color: transparent }
-
-    /* Pantallas muy pequeñas */
     @media (max-width: 380px){
       .splash-card{padding: 14px}
       .item{padding: 12px}
     }
-
-    /* Reduce motion: desactiva transiciones */
     @media (prefers-reduced-motion: reduce){
       .splash{transition:none}
     }
-  </style>
+</style>
+<!-- ----------------------------------------------------------aqui termina el ccs------------------------------------------------------- -->
 </head>
 <body>
-  <!-- Splash -->
   <div class="splash" id="splash">
     <div class="splash-card">
-      <h1>Feliz cumple, amorcito</h1>
+      <h1>Eres la Mejor te amo</h1>
       <p>(tócame para abrir)</p>
       <button id="openBtn" class="btn">Abrir</button>
     </div>
   </div>
 
   <header class="topbar">
-    <div class="brand">Cartas 💌</div>
+    <div class="brand">Mensajitos de amor</div>
   </header>
 
   <main class="container">
     <section class="card">
-      <h2>Tus cartas</h2>
+      <h2>Tus Mensajes</h2>
       <div id="listado" class="listado"></div>
       <p class="meta" id="estado">Cargando…</p>
     </section>
   </main>
 
-  <footer class="footer">Hecho con 💗 por SrYulo</footer>
+  <footer class="footer">Hecho con 💗 por Tu novio Hermoso</footer>
 
-  <script>
-    
-  // URL del Gist estable (sin hash de commit)
+ <script>
   const FEED_URL = "https://gist.githubusercontent.com/Int-Code-UY/ee642cb9278f57311196c31e500e28df/raw/cartas.json";
-
-  // Splash
   const splash = document.getElementById('splash');
   const openBtn = document.getElementById('openBtn');
   openBtn.addEventListener('click', ()=> splash.classList.add('hide'));
@@ -180,11 +154,31 @@
   const listado = document.getElementById('listado');
   const estado  = document.getElementById('estado');
 
-  // 👉 cache-busting + no-store
+  const TZ = 'America/Montevideo';
+  function parseDateSafe(input) {
+    if (!input) return null;
+    if (/^\d{4}-\d{2}-\d{2}$/.test(input)) {
+      const [y, m, d] = input.split('-').map(Number);
+      return new Date(y, m - 1, d); 
+    }
+    const d2 = new Date(input);
+    return Number.isNaN(d2.getTime()) ? null : d2;
+  }
+  function formatearFecha(f) {
+    const d = parseDateSafe(f);
+    if (!d) return '';
+    return new Intl.DateTimeFormat('es-UY', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      timeZone: TZ
+    }).format(d);
+  }
+
   async function cargarCartas(){
     try{
-      const url = `${FEED_URL}?t=${Date.now()}`; // fuerza a evitar CDN cache
-      const res = await fetch(url, { cache: 'no-store' }); // más fuerte que 'no-cache'
+      const url = `${FEED_URL}?t=${Date.now()}`; 
+      const res = await fetch(url, { cache: 'no-store' }); 
       if(!res.ok) throw new Error('No pude leer el feed');
       const cartas = await res.json();
 
@@ -208,19 +202,11 @@
 
   function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
   function renderContenido(s){ return esc(String(s ?? '')).replace(/\n/g,'<br>'); }
-  function formatearFecha(f){
-    if(!f) return '';
-    const d = new Date(f);
-    if(Number.isNaN(d.getTime())) return f;
-    return d.toLocaleDateString('es-UY', { year:'numeric', month:'long', day:'numeric' });
-  }
 
-  // Carga inicial + refresco al volver a la app
   cargarCartas();
   document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) cargarCartas(); });
-  window.addEventListener('pageshow', (e)=>{ if(e.persisted) cargarCartas(); }); // iOS BFCache
+  window.addEventListener('pageshow', (e)=>{ if(e.persisted) cargarCartas(); }); 
 
-  // PWA ligero (no intercepta Gist externo)
   if('serviceWorker' in navigator){
     const code = `
       const C='carta-shell-v2';
@@ -235,12 +221,7 @@
     const url = URL.createObjectURL(blob);
     navigator.serviceWorker.register(url);
   }
-  </script>
+</script>
+
 </body>
 </html>
-
-
-
-
-
-
