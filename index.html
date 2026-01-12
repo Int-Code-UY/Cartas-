@@ -12,25 +12,22 @@
 
   <style>
     :root{
-      /* 🎄 Paleta navideña suave */
-      --bg:#fffaf6;
+      /* 💗 Paleta romántica */
+      --bg:#fff5fb;
       --card:#ffffffee;
 
-      --red:#d83b3b;
-      --red2:#b81f2f;
+      --pink:#ff8fc1;
+      --pink2:#ff5aa6;
+      --rose:#ffd1e6;
+      --lilac:#f3d6ff;
 
-      --green:#0f6b3f;
-      --green2:#0b5030;
+      --text:#4a2f40;
+      --muted:#7a5b6c;
 
-      --gold:#f4c24f;
-
-      --text:#2f2a2a;
-      --muted:#6f6464;
-
-      --ring: rgba(244,194,79,.55);
+      --ring: rgba(255,90,166,.35);
 
       --radius:18px;
-      --shadow:0 12px 34px rgba(0,0,0,.10);
+      --shadow:0 12px 34px rgba(255,90,166,.12);
 
       --space: clamp(12px, 2.8vw, 18px);
       --space-lg: clamp(16px, 4vw, 26px);
@@ -46,37 +43,38 @@
       color:var(--text);
       padding-left: env(safe-area-inset-left);
       padding-right: env(safe-area-inset-right);
-
-      /* 🎅 Fondo navideño: “nieve” + degradés cálidos */
-      background:
-        radial-gradient(900px 520px at 12% -12%, rgba(255,220,220,.8), transparent 60%),
-        radial-gradient(900px 520px at 110% 12%, rgba(214,255,235,.65), transparent 62%),
-        radial-gradient(1100px 700px at 50% 120%, rgba(244,194,79,.22), transparent 60%),
-        var(--bg);
       overflow-x:hidden;
+
+      /* 💕 Fondo romántico suave */
+      background:
+        radial-gradient(900px 520px at 12% -12%, rgba(255,143,193,.28), transparent 60%),
+        radial-gradient(900px 520px at 110% 12%, rgba(243,214,255,.35), transparent 62%),
+        radial-gradient(1100px 700px at 50% 120%, rgba(255,209,230,.35), transparent 60%),
+        var(--bg);
     }
 
-    /* Copitos (sin imágenes) */
+    /* Corazoncitos sutiles (sin imágenes) */
     body::before{
       content:"";
       position:fixed;
-      inset:-20px;
+      inset:-40px;
       pointer-events:none;
       z-index:0;
+      opacity:.35;
+      filter: blur(.2px);
       background:
-        radial-gradient(circle at 10% 20%, rgba(255,255,255,.85) 0 2px, transparent 3px),
-        radial-gradient(circle at 30% 70%, rgba(255,255,255,.70) 0 1.5px, transparent 3px),
-        radial-gradient(circle at 55% 35%, rgba(255,255,255,.75) 0 1.8px, transparent 3px),
-        radial-gradient(circle at 80% 60%, rgba(255,255,255,.70) 0 1.6px, transparent 3px),
-        radial-gradient(circle at 92% 18%, rgba(255,255,255,.80) 0 2px, transparent 3px);
-      opacity:.55;
-      filter: blur(.1px);
-      animation: snowDrift 18s linear infinite;
+        radial-gradient(circle at 12% 18%, rgba(255,90,166,.25) 0 2px, transparent 3px),
+        radial-gradient(circle at 30% 72%, rgba(255,143,193,.22) 0 1.8px, transparent 3px),
+        radial-gradient(circle at 55% 35%, rgba(243,214,255,.22) 0 2px, transparent 3px),
+        radial-gradient(circle at 78% 58%, rgba(255,209,230,.22) 0 1.9px, transparent 3px),
+        radial-gradient(circle at 92% 18%, rgba(255,90,166,.22) 0 2.1px, transparent 3px);
+      animation: floaty 14s ease-in-out infinite;
     }
 
-    @keyframes snowDrift{
-      0%{ transform: translateY(-10px); }
-      100%{ transform: translateY(140px); }
+    @keyframes floaty{
+      0%{ transform: translateY(-8px); }
+      50%{ transform: translateY(10px); }
+      100%{ transform: translateY(-8px); }
     }
 
     /* Capa base para que todo quede arriba del “before” */
@@ -86,7 +84,7 @@
       position:fixed; inset:0; z-index:10; display:grid; place-items:center;
       min-height:100dvh;
       background: linear-gradient(180deg, rgba(255,255,255,.92), rgba(255,255,255,.78));
-      backdrop-filter: blur(8px);
+      backdrop-filter: blur(10px);
       transition:opacity .45s ease, visibility .45s ease;
       padding: var(--space);
     }
@@ -97,26 +95,26 @@
       padding: var(--space-lg);
       text-align:center;
       background:var(--card);
-      border:1px solid rgba(0,0,0,.06);
+      border:1px solid rgba(255,90,166,.14);
       border-radius:22px;
       box-shadow:var(--shadow);
       position:relative;
       overflow:hidden;
     }
 
-    /* Cinta navideña arriba */
+    /* Borde romántico arriba */
     .splash-card::before{
       content:"";
       position:absolute;
       inset:0 0 auto 0;
       height:10px;
-      background: linear-gradient(90deg, var(--red), var(--gold), var(--green), var(--gold), var(--red));
+      background: linear-gradient(90deg, var(--pink2), var(--rose), var(--lilac), var(--rose), var(--pink2));
       opacity:.95;
     }
 
     .splash h1{
       margin:10px 0 6px;
-      color:var(--green);
+      color:var(--pink2);
       font-size: clamp(22px, 6.5vw, 28px);
       text-wrap: balance;
       letter-spacing:.2px;
@@ -127,15 +125,15 @@
       font-size:clamp(14px,3.8vw,16px)
     }
 
-    /* Botón navideño */
+    /* Botón romántico */
     .btn{
-      background: linear-gradient(180deg, var(--red), var(--red2));
+      background: linear-gradient(180deg, var(--pink), var(--pink2));
       color:#fff;
       border:none;
       border-radius:999px;
       padding: 12px 20px;
       font-weight:800;
-      box-shadow: 0 12px 28px rgba(184,31,47,.25);
+      box-shadow: 0 12px 28px rgba(255,90,166,.22);
       touch-action: manipulation;
       min-height: 44px;
       position:relative;
@@ -147,7 +145,7 @@
       inset:-40% -20%;
       background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), transparent 35%);
       transform: rotate(12deg);
-      opacity:.6;
+      opacity:.65;
     }
     .btn:active{ transform: translateY(1px); }
 
@@ -155,27 +153,27 @@
       position:sticky; top:0; z-index:5;
       background: rgba(255,255,255,.86);
       backdrop-filter: blur(10px);
-      border-bottom:1px solid rgba(0,0,0,.06);
+      border-bottom:1px solid rgba(255,90,166,.12);
       padding: calc(env(safe-area-inset-top) + 10px) var(--space) 10px;
     }
 
-    /* Guirnalda/luces simple arriba de la topbar */
+    /* Línea romántica suave arriba de la topbar */
     header.topbar::before{
       content:"";
       display:block;
       height:10px;
       border-radius:999px;
       background:
-        radial-gradient(circle, rgba(216,59,59,.95) 0 3px, transparent 4px) 0 0/22px 10px,
-        radial-gradient(circle, rgba(15,107,63,.95) 0 3px, transparent 4px) 11px 0/22px 10px,
-        radial-gradient(circle, rgba(244,194,79,.95) 0 3px, transparent 4px) 0 0/22px 10px;
-      opacity:.9;
+        radial-gradient(circle, rgba(255,90,166,.85) 0 3px, transparent 4px) 0 0/22px 10px,
+        radial-gradient(circle, rgba(255,143,193,.75) 0 3px, transparent 4px) 11px 0/22px 10px,
+        radial-gradient(circle, rgba(243,214,255,.75) 0 3px, transparent 4px) 0 0/22px 10px;
+      opacity:.7;
       margin-bottom:8px;
     }
 
     .brand{
       font-weight:900;
-      color:var(--green);
+      color:var(--text);
       text-align:center;
       font-size: clamp(16px, 4.8vw, 18px);
       letter-spacing:.2px;
@@ -184,9 +182,9 @@
       display:inline-block;
       margin-left:8px;
       font-weight:900;
-      color:var(--red2);
-      background: rgba(244,194,79,.22);
-      border: 1px solid rgba(244,194,79,.35);
+      color:var(--pink2);
+      background: rgba(255,209,230,.55);
+      border: 1px solid rgba(255,90,166,.18);
       padding: 2px 10px;
       border-radius:999px;
       font-size: .78em;
@@ -202,7 +200,7 @@
 
     .card{
       background:var(--card);
-      border:1px solid rgba(0,0,0,.06);
+      border:1px solid rgba(255,90,166,.12);
       border-radius:var(--radius);
       box-shadow:var(--shadow);
       padding: var(--space);
@@ -216,13 +214,13 @@
       position:absolute;
       inset:auto 0 0 0;
       height:6px;
-      background: linear-gradient(90deg, var(--green), var(--gold), var(--red));
+      background: linear-gradient(90deg, var(--lilac), var(--rose), var(--pink2));
       opacity:.75;
     }
 
     h2{
       margin: 4px 0 var(--space);
-      color: var(--red2);
+      color: var(--pink2);
       font-size: clamp(18px, 5.6vw, 22px);
       text-wrap: balance;
     }
@@ -231,15 +229,15 @@
 
     .item{
       padding: clamp(12px,3.6vw,16px);
-      border:1px solid rgba(0,0,0,.06);
+      border:1px solid rgba(255,90,166,.12);
       border-radius:14px;
       background:#fff;
-      box-shadow: 0 10px 18px rgba(0,0,0,.05);
+      box-shadow: 0 10px 18px rgba(0,0,0,.04);
     }
 
     .item h3{
       margin:0 0 6px;
-      color: var(--green);
+      color: var(--pink2);
       font-weight:800;
       font-size: clamp(16px, 4.8vw, 18px);
       line-height:1.2;
@@ -247,7 +245,7 @@
     }
 
     .meta{
-      color:#756c6c;
+      color:var(--muted);
       font-size: clamp(12px,3.8vw,14px)
     }
 
@@ -259,7 +257,7 @@
       word-break: break-word;
     }
 
-    /* Mensaje navideño arriba del listado */
+    /* Banner romántico */
     .banner{
       display:flex;
       align-items:center;
@@ -268,14 +266,14 @@
       padding: 10px 12px;
       border-radius: 14px;
       margin-bottom: var(--space);
-      background: linear-gradient(90deg, rgba(15,107,63,.10), rgba(244,194,79,.14), rgba(216,59,59,.10));
-      border: 1px solid rgba(0,0,0,.06);
+      background: linear-gradient(90deg, rgba(255,143,193,.12), rgba(243,214,255,.14), rgba(255,209,230,.14));
+      border: 1px solid rgba(255,90,166,.12);
       color: var(--text);
       font-weight: 750;
       text-align:center;
     }
     .banner span{
-      color: var(--red2);
+      color: var(--pink2);
       font-weight: 900;
     }
 
@@ -307,19 +305,19 @@
 <body>
   <div class="splash" id="splash">
     <div class="splash-card">
-      <h1>Feliz Navidad ❤️</h1>
-      <p>(tocame para abrir 🎁)</p>
+      <h1>Para vos ❤️</h1>
+      <p>(tocame para abrir 💌)</p>
       <button id="openBtn" class="btn">Abrir</button>
     </div>
   </div>
 
   <header class="topbar">
-    <div class="brand">Mensajitos de amor <small>🎄 2025</small></div>
+    <div class="brand">Mensajitos de amor <small>💗 2026</small></div>
   </header>
 
   <main class="container">
     <section class="card">
-      <div class="banner" id="xmasBanner">✨ <span>Navidad</span> — mensajes para vos 🎅</div>
+      <div class="banner" id="loveBanner">✨ <span>Amor</span> — mensajitos para vos 💞</div>
 
       <h2>Tus Mensajes</h2>
       <div id="listado" class="listado"></div>
@@ -327,7 +325,7 @@
     </section>
   </main>
 
-  <footer class="footer">Hecho con 💛 por Tu novio Hermoso</footer>
+  <footer class="footer">Hecho con 💖 por Tu novio Hermoso</footer>
 
   <script>
     const FEED_URL = "https://gist.githubusercontent.com/Int-Code-UY/ee642cb9278f57311196c31e500e28df/raw/cartas.json";
@@ -338,18 +336,6 @@
 
     const listado = document.getElementById('listado');
     const estado  = document.getElementById('estado');
-
-    // Banner: cambia automáticamente según el mes (dic = navidad)
-    const banner = document.getElementById('xmasBanner');
-    (function setSeasonBanner(){
-      const now = new Date();
-      const m = now.getMonth(); // 0-11
-      if(m === 11){
-        banner.innerHTML = '✨ <span>Navidad</span> — mensajes para vos 🎅';
-      }else{
-        banner.innerHTML = '✨ <span>Amor</span> — mensajitos para vos 💌';
-      }
-    })();
 
     const TZ = 'America/Montevideo';
     function parseDateSafe(input) {
@@ -421,6 +407,8 @@
   </script>
 </body>
 </html>
+
+
 
 
 
