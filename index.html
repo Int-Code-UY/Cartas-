@@ -284,6 +284,39 @@
       font-size: clamp(12px,3.6vw,14px);
     }
 
+
+    .hero{
+      margin-bottom:20px;
+    }
+    .hero img{
+      width:100%;
+      display:block;
+      border-radius:18px;
+      border:2px solid rgba(255,90,166,.15);
+      box-shadow:0 12px 30px rgba(255,90,166,.15);
+    }
+    .contador-amor{
+      margin:16px 0 20px;
+      padding:14px;
+      text-align:center;
+      border-radius:14px;
+      background:linear-gradient(90deg,rgba(255,143,193,.12),rgba(243,214,255,.14));
+      border:1px solid rgba(255,90,166,.12);
+      font-weight:700;
+      color:var(--pink2);
+    }
+    .mimo-btn{width:100%;margin-bottom:15px;}
+    .mimo-mensaje{
+      display:none;
+      background:white;
+      padding:15px;
+      border-radius:14px;
+      border:1px solid rgba(255,90,166,.12);
+      text-align:center;
+      color:var(--text);
+      margin-bottom:20px;
+    }
+
     :focus-visible{
       outline: 3px solid var(--ring);
       outline-offset: 2px;
@@ -317,7 +350,18 @@
 
   <main class="container">
     <section class="card">
-      <div class="banner" id="loveBanner">✨ <span>Amor</span> — mensajitos para vos 💞</div>
+      
+
+      <div class="hero">
+        <img id="fotoPortada" src="foto (1).jpeg" alt="Nosotros">
+      </div>
+
+      <div class="contador-amor">❤️ Cargando...</div>
+
+      <button id="mimoBtn" class="btn mimo-btn">Necesito un mimo ❤️</button>
+      <div id="mimoMensaje" class="mimo-mensaje"></div>
+
+
 
       <h2>Tus Mensajes</h2>
       <div id="listado" class="listado"></div>
@@ -369,6 +413,7 @@
         cartas.forEach(c => {
           const item = document.createElement('div');
           item.className = 'item';
+          item.style.animationDelay = `${cartas.indexOf(c) * 0.15}s`;
           item.innerHTML = `
             <h3>${esc(c.titulo || 'Sin título')}</h3>
             <div class="meta">${esc(formatearFecha(c.fecha))}</div>
@@ -385,6 +430,94 @@
 
     function esc(s){ return String(s ?? '').replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m])); }
     function renderContenido(s){ return esc(String(s ?? '')).replace(/\n/g,'<br>'); }
+
+
+    function actualizarContadorAmor(){
+      const inicio = new Date('2023-01-13');
+      const hoy = new Date();
+      const dias = Math.floor((hoy - inicio)/(1000*60*60*24));
+      const el = document.querySelector('.contador-amor');
+      if(el){
+        el.innerHTML = `❤️ Juntos desde el 13/01/2023<br>${dias} días de amor 💕`;
+      }
+    }
+
+    const mensajesMimos = [
+      "Sos lo más lindo que me pasó ❤️",
+      "Estoy orgulloso de vos 🌹",
+      "Te elegiría mil veces más 💕",
+      "Tu sonrisa mejora mis días ✨",
+      "Gracias por estar conmigo 💖",
+      "Sos mi lugar favorito 🏡❤️",
+      "Ojalá pudiera abrazarte ahora mismo 🤗",
+      "Siempre pienso en vos 🌷",
+      "Sos mi persona favorita 💞",
+      "Cada día a tu lado es un regalo 🎁",
+      "Deseoso de pasar el resto de mi vida contigo 💍",
+      "Amo cada berrinche tuyo, sos perfecta para mí 😘",
+      "Amo tu cuerpo como tu alma 💗",
+      "Sos lo que me motiva a avanzar cada día 🚀",
+      "Quiero ser el mejor yo posible para vos 🌟",
+      "Nada relaja mas mi corazon que saber que estas ahí 💓",
+      "Quiero seguir conociéndote toda la vida💫",
+      "Amo ser parte de cada momento de tu vida, gracias por dejarme estar 💖",
+      "Nada acelera mas mi corazon que verte feliz 😊",
+      "Sos mi pensamiento favorito 💭❤️",
+      "Cada comida contigo es mi favorita 🍲💕",
+      "Me da igual la comida, lo que importa es comerla con vos 🍽️❤️",
+      "Me da igual el momento o el lugar, mientras haya un beso tuyo para acompañarlo 😘",
+    ];
+
+    document.addEventListener('DOMContentLoaded',()=>{
+      actualizarContadorAmor();
+
+      const btn=document.getElementById('mimoBtn');
+      const div=document.getElementById('mimoMensaje');
+
+      if(btn && div){
+        btn.addEventListener('click',()=>{
+          const mensaje=mensajesMimos[Math.floor(Math.random()*mensajesMimos.length)];
+          div.innerHTML=mensaje;
+          div.style.display='block';
+        });
+      }
+    });
+
+
+
+    document.addEventListener('DOMContentLoaded',()=>{
+
+      const fotos = [
+        'foto (1).jpeg',
+        'foto (2).jpeg',
+        'foto (3).jpeg',
+        'foto (4).jpeg',
+        'foto (5).jpeg',
+        'foto (6).jpeg',
+        'foto (7).jpeg'
+      ];
+
+      const foto = document.getElementById('fotoPortada');
+
+      if(foto){
+        function cambiarFoto(){
+          const aleatoria = fotos[Math.floor(Math.random()*fotos.length)];
+          foto.style.opacity = '0';
+
+          setTimeout(()=>{
+            foto.src = aleatoria + '?t=' + Date.now();
+            foto.style.opacity = '1';
+          },300);
+        }
+
+        foto.style.transition = 'opacity .6s ease';
+
+        cambiarFoto();
+        setInterval(cambiarFoto, 100000);
+      }
+
+    });
+
 
     cargarCartas();
     document.addEventListener('visibilitychange', ()=>{ if(!document.hidden) cargarCartas(); });
@@ -407,8 +540,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
